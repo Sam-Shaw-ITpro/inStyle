@@ -26,9 +26,9 @@ router.get('/all', validateSession, function (req, res) {
 
 router.post('/create', validateSession, function (req, res) {
   if (!req.errors) {
-    let col = req.body.color; //added log
-    let bor = req.body.bordercolor;  //added log
-    let fSiz = req.body.fSize;  //added log
+    let col = req.body.color;
+    let bor = req.body.bordercolor;
+    let fSiz = req.body.fSize;
     let own = req.user.id;
 console.log('log it sam - favcont' + own)
     Favorites.create({
@@ -49,6 +49,31 @@ console.log('log it sam - favcont' + own)
     res.status(500).json(req.errors);
   }
 })
+
+router.put('/update/:id', validateSession, function (req, res) {
+  var data = req.body.id;
+  // var data = req.params.id;   // work on this   
+  console.log("in controller " + data + req.body.color + req.body.bordercolor + req.body.fSize )
+  Favorites.update({
+    color: req.body.color,
+    bordercolor: req.body.bordercolor,
+    fSize: req.body.fSize,
+    ///// maybe id here???
+  },
+    { where: { id: data } }   // record # here
+  ).then(
+    function updateSuccess(updatedLog) {
+      res.json({
+        logdata: updatedLog
+      });
+    },
+    function updateError(err) {
+      res.send(500, err.message);
+    }
+  )
+});
+
+
 
 router.delete('/delete/:id', validateSession, function (req, res) {
   let id = req.body.log.id;
